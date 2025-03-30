@@ -14,7 +14,7 @@ public sealed class VRPlayerController : Component
 	[Property, Group( "Collider" )] HullCollider UpperCollider { get; set; }
 	
 	[Property, Group( "Head" )] GameObject Head { get; set; }
-	[Property, Group( "Head" )] GameObject RenderHead { get; set; }
+	[Property, Group( "Head" )] GameObject Eyes { get; set; }
 	[Property, Group( "Left Hand" )] GameObject HandL { get; set; }
 	[Property, Group( "Left Hand" )] GameObject IKTargetL { get; set; }
 	[Property, Group( "Right Hand" )] GameObject HandR { get; set; }
@@ -40,8 +40,10 @@ public sealed class VRPlayerController : Component
 	{
 		if ( IsProxy ) return;
 
-		Head.LocalPosition = Head.LocalPosition.WithZ( Head.LocalPosition.z.Clamp( 16, 80 ) );
-		Anim.DuckLevel = 
+		Anim.DuckLevel = 1 - (Head.LocalPosition.z - 10 ).Remap( 32, 55 );
+		Anim.Target.WorldRotation = Rotation.LookAt( Scene.Camera.WorldRotation.Forward ).Angles().WithPitch( 0 );
+		Anim.Target.GameObject.Parent.LocalPosition += Head.WorldPosition.WithZ( 0 ) - Eyes.WorldPosition.WithZ( 0 );
+		
 		Scene.Camera.WorldPosition = Head.WorldPosition;
 		Scene.Camera.WorldRotation = Head.WorldRotation;
 	}
